@@ -1,4 +1,3 @@
-
 name: Python CI
 
 on:
@@ -8,7 +7,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -19,7 +17,7 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
-        run: python -m pip install pytest ruff build
+        run: python -m pip install pytest ruff
 
       - name: Check code quality
         run: python -m ruff check .
@@ -30,7 +28,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -39,6 +36,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.14"
+
       - name: List project files
         run: |
           pwd
@@ -50,9 +48,9 @@ jobs:
 
       - name: Build package
         run: python -m build
-    - name: Upload package artifacts
+
+      - name: Upload package artifacts
         uses: actions/upload-artifact@v4
         with:
           name: python-package
           path: dist/
-
