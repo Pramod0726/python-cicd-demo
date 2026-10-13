@@ -39,10 +39,20 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.14"
+      - name: List project files
+        run: |
+          pwd
+          ls -la
+          test -f pyproject.toml
 
       - name: Install build tool
         run: python -m pip install build
 
       - name: Build package
         run: python -m build
+    - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
 
