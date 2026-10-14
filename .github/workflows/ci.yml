@@ -58,7 +58,7 @@ jobs:
           name: python-package
           path: dist/
 
-  release:
+    release:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -72,13 +72,19 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Install build tool
-        run: python -m pip install build
+      - name: Install test and build tools
+        run: python -m pip install pytest ruff build
+
+      - name: Check code quality
+        run: python -m ruff check .
+
+      - name: Run tests
+        run: python -m pytest -v
 
       - name: Build Python package
         run: python -m build
 
-       - name: Publish GitHub Release
+      - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
