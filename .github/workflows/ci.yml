@@ -1,11 +1,19 @@
-name: Python CI
+name: Python CI and Release
 
 on:
   push:
+    branches:
+      - "**"
+    tags:
+      - "v*"
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   test:
+    if: "!startsWith(github.ref, 'refs/tags/')"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -26,8 +34,9 @@ jobs:
         run: python -m pytest -v
 
   build:
-    runs-on: ubuntu-latest
+    if: "!startsWith(github.ref, 'refs/tags/')"
     needs: test
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -37,16 +46,10 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: List project files
-        run: |
-          pwd
-          ls -la
-          test -f pyproject.toml
-
       - name: Install build tool
         run: python -m pip install build
 
-      - name: Build package
+      - name: Build Python package
         run: python -m build
 
       - name: Upload package artifacts
@@ -54,3 +57,32 @@ jobs:
         with:
           name: python-package
           path: dist/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install build tool
+        run: python -m pip install build
+
+      - name: Build Python package
+        run: python -m build
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes
+            
