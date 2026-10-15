@@ -1,5 +1,5 @@
 
-from app import add, multiply, subtract
+from app import add, divide, multiply, subtract
 
 
 def test_add():
@@ -16,3 +16,14 @@ def test_multiply():
 
 def test_subtract():
     assert subtract(5, 3) == 2
+
+
+def test_divide():
+    assert divide(10, 2) == 5
+
+
+def test_divide_by_zero():
+    import pytest
+
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        divide(10, 0)
