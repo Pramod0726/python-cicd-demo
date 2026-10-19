@@ -5,6 +5,13 @@ from pydantic import BaseModel
 from app import add, divide, multiply, subtract
 
 api = FastAPI(title="Python CI/CD Demo API", version="0.3.0")
+@api.get("/")
+def root():
+    return {
+        "message": "Python CI/CD Demo API is running",
+        "docs": "/docs",
+        "health": "/health",
+    }
 
 
 class Calculation(BaseModel):
