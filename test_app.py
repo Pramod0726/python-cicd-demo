@@ -27,3 +27,6 @@ def test_divide_by_zero():
 
     with pytest.raises(ValueError, match="Cannot divide by zero"):
         divide(10, 0)
+
+def test_ci_failure_demo():
+    assert 1 + 1 == 3
