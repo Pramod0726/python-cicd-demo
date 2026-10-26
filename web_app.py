@@ -8,7 +8,7 @@ api = FastAPI(title="Python CI/CD Demo API", version="0.3.0")
 @api.get("/")
 def root():
     return {
-        "message": "Python CI/CD Demo API is running",
+        "message": "Python CI/CD Demo API is running - CD test successful",
         "docs": "/docs",
         "health": "/health",
     }
