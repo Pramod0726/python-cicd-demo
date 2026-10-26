@@ -35,7 +35,7 @@ def test_root():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {
-        "message": "Python CI/CD Demo API is running",
-        "docs": "/docs",
-        "health": "/health",
+        "message": "Python CI/CD Demo API is running - CD test successful",
+        "docs"   : "/docs",
+        "health" : "/health",
     }
