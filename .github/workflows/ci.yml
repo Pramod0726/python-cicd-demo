@@ -87,6 +87,37 @@ jobs:
             pramodkumarg/python-cicd-demo:latest
             pramodkumarg/python-cicd-demo:${{ github.sha }}
 
+  deploy-health-check:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Render deployment
+        run: sleep 60
+
+      - name: Verify Render health endpoint
+        run: |
+          set -e
+          for attempt in $(seq 1 10); do
+            response=$(curl -sS --max-time 15 \
+              -w "\n%{http_code}" \
+              https://python-cicd-demo-sxo6.onrender.com/health) || true
+
+            status_code=$(printf '%s\n' "$response" | tail -n 1)
+            body=$(printf '%s\n' "$response" | sed '$d')
+
+            if [ "$status_code" = "200" ] && \
+               printf '%s' "$body" | grep -q '"status"[[:space:]]*:[[:space:]]*"ok"'; then
+              echo "Render health check passed."
+              exit 0
+            fi
+
+            echo "Attempt $attempt failed (HTTP ${status_code:-unknown}). Retrying..."
+            sleep 15
+          done
+
+          echo "Render health check failed after 10 attempts."
+          exit 1
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
