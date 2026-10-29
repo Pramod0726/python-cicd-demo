@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from app import add, divide, multiply, subtract
 
-api = FastAPI(title="Python CI/CD Demo API", version="0.3.0")
+api = FastAPI(title="Python CI/CD Demo API", version="0.4.0")
 @api.get("/")
 def root():
     return {
