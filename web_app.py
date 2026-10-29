@@ -23,6 +23,11 @@ class Calculation(BaseModel):
 @api.get("/health")
 def health():
     return {"status": "ok"}
+@api.get("/version")
+def version():
+    return {
+        "version": api.version,
+    }
 
 
 @api.post("/calculate")
